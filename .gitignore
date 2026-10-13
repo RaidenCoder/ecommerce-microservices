@@ -1,0 +1,62 @@
+
+# =========================
+# Java / Maven
+# =========================
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Keep Maven Wrapper files tracked:
+# mvnw, mvnw.cmd, .mvn/wrapper/*
+
+# =========================
+# IDEs and editors
+# =========================
+.idea/
+.vscode/
+*.iml
+*.suo
+*.user
+
+# =========================
+# Logs and runtime output
+# =========================
+logs/
+*.log
+
+# =========================
+# Environment files
+# =========================
+.env
+.env.*
+!.env.example
+
+# Local Spring configuration
+application-local.properties
+application-local.yml
+application-local.yaml
+application-local.yml
+bootstrap-local.properties
+bootstrap-local.yml
+
+# =========================
+# Kubernetes local secrets
+# =========================
+k8s/my-secret.yml
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.bak
+*.swp
+*.swo

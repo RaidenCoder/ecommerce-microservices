@@ -1,0 +1,92 @@
+services:
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - ecommerce-network
+
+
+  order-db-service:
+    image: postgres
+    container_name: order-db-service
+    environment:
+      - POSTGRES_DB=OrderDB
+      - POSTGRES_USER=Avi
+      - POSTGRES_PASSWORD=password
+    networks:
+      - ecommerce-network
+    volumes:
+      - order-db-data:/var/lib/postgresql
+
+
+  inventory-db-service:
+    image: postgres
+    container_name: inventory-db-service
+    environment:
+      - POSTGRES_DB=InventoryDB
+      - POSTGRES_USER=Avi
+      - POSTGRES_PASSWORD=password
+    networks:
+      - ecommerce-network
+    volumes:
+      - inventory-db-data:/var/lib/postgresql
+
+
+  discovery-service:
+    image: raidencoder/discovery-service
+    container_name: discovery-service
+    networks:
+      - ecommerce-network
+
+
+  config-service:
+    image: raidencoder/config-service
+    container_name: config-service
+    networks:
+      - ecommerce-network
+    depends_on:
+      - discovery-service
+
+
+  inventory-service:
+    image: raidencoder/inventory-service
+    container_name: inventory-service
+    networks:
+      - ecommerce-network
+    depends_on:
+      - config-service
+      - inventory-db-service
+      - zipkin
+
+
+  order-service:
+    image: raidencoder/order-service
+    container_name: order-service
+    networks:
+      - ecommerce-network
+    depends_on:
+      - config-service
+      - order-db-service
+      - zipkin
+
+
+  api-gateway-service:
+    image: raidencoder/api-gateway-service
+    container_name: api-gateway-service
+    networks:
+      - ecommerce-network
+    depends_on:
+      - order-service
+      - inventory-service
+
+    ports:
+      - "8080:8080"
+
+volumes:
+  order-db-data:
+  inventory-db-data:
+
+networks:
+  ecommerce-network:
