@@ -22,6 +22,7 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         service:
           - api-gateway
@@ -36,10 +37,11 @@ jobs:
 
       # Step 2: Set up Java
       - name: Set up Java 21
-        uses: actions/checkout@v3
+        uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: temurin
+          java-version: "21"
+          cache: maven
 
       # Step 3: Log in to Docker Hub
       - name: Log in to Docker Hub
@@ -48,7 +50,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 4: Build and push Docker images using Jib for each service
+      # Step 4: Make Maven Wrapper executable
+      - name: Make Maven Wrapper executable
+        working-directory: ${{ matrix.service }}
+        run: chmod +x mvnw
+
+      # Step 5: Build and push Docker images using Jib for each service
       - name: Build and Push ${{ matrix.service }}
         working-directory: ${{ matrix.service }}
         run: |
